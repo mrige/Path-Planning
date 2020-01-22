@@ -21,13 +21,12 @@ function QuadNode(type, initX,finX,initY, finY,qSize){
     this.southWest = null;
     this.southEast = null;
 
-    this.checkType = function(intX,finX,initY,finY){
+    this.checkType = function(initX,finX,initY,finY){
         var numType = 1;
         var iniTialType = land[initX][initY].free;
         for(var i = initX+1; i < finX; i++){
             for(var j = initY+1; j < finY ;j++){
                 if(iniTialType == true && land[i][j].free==false){
-                    // console.log("dd");
                     numType++;
                     return true;
                 }
@@ -35,8 +34,6 @@ function QuadNode(type, initX,finX,initY, finY,qSize){
                     numType++;
                     return true;
                 }
-
-
             }
         }
         return false;

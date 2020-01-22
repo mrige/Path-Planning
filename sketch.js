@@ -4,7 +4,7 @@
 
 
 //Global Variable
-var length = 100;
+var length = 75;
 var numObstacles = 10;
 var instance = 1;
 var instance2 = 1;
@@ -12,9 +12,8 @@ var startPosRow = 0;
 var startPosCol = 0;
 var endPosRow = 0;
 var endPosCol = 0;
-var itr = 0;
 var count = 0;
-var stepLenght = 20;
+var stepLenght = 0.05;
 var land = new Array(length);
 var obsSize = [];
 var rowObsList = [];
@@ -46,7 +45,7 @@ treelen = 0;
 function setup(){
 
     var pixLen = cmToPixel(length);
-    var myCanvas = createCanvas(pixLen,pixLen);
+    createCanvas(pixLen,pixLen);
 
 
    for(var i = 0; i < length; i++){
@@ -75,8 +74,6 @@ function draw() {
 
     background('#4d4e52');
 
-
-
     placeObstacles();
     placeStartEnd();
 
@@ -89,8 +86,6 @@ function draw() {
 
 }
 
-
-//
 function deleteVal(list, val) {
 
     for(var i = list.length-1; i >=0; i--){
@@ -116,13 +111,11 @@ function cmToPixel(len){
     return len * 37.795275591;
 }
 
-
-
 function placeObstacles(){
 
     for(var i = 0; i < numObstacles; i++){
 
-        if(instance ==1) {
+        if(instance ===1) {
             var row = Math.floor(Math.random() * length);
             var col = Math.floor(Math.random() * length);
             var obSize = Math.floor((Math.random() * 20) + 10);
@@ -133,10 +126,6 @@ function placeObstacles(){
             obsSize.push(obSize);
         }
         var spot = land[rowObsList[i]][colObsList[i]];
-        //console.log(obSize);
-        //spot.free = true;
-
-
 
         for(var j = 0; j < obsSize[i] && rowObsList[i] + j < length;j++){
             for(var k = 0; k < obsSize[i] && colObsList[i] + k < length; k++) {
@@ -148,7 +137,6 @@ function placeObstacles(){
             }
         }
 
-
     }
     instance++;
 }
@@ -156,15 +144,14 @@ function placeObstacles(){
 
 function placeStartEnd(){
 
-
     var row = Math.floor(Math.random() * (length-2));
     var col = Math.floor(Math.random() * (length-2));
 
-    while (land[row][col].free != true){
+    while (land[row][col].free !== true){
         row = Math.floor(Math.random() * (length-2));
         col = Math.floor(Math.random() * (length-2));
     }
-            if(instance2 == 1) {
+            if(instance2 === 1) {
                 startPosRow = row;
                 startPosCol = col;
                 openSet.push(land[startPosRow][startPosCol]);
@@ -178,7 +165,7 @@ function placeStartEnd(){
      row = Math.floor(Math.random() * (length-2));
      col = Math.floor(Math.random() * (length-2));
 
-    if (instance2 == 2 && land[row][col].free == true){
+    if (instance2 === 2 && land[row][col].free === true){
 
         endPosRow = row;
         endPosCol = col;
@@ -197,9 +184,6 @@ function distance(init , end){
 
 function stepNext(init, end ){
     if(distance(init,end) < cmToPixel(stepLenght)){
-
-
-        //console.log(distance(init, end).toString() + "  oooo");
         return end;
     }
     else{
@@ -210,20 +194,18 @@ function stepNext(init, end ){
 
         var pos= new landObject(xPos,yPos);
         var k = distance(init,pos);
-       while(new landObject(pos.x/k,pos.y/k).free = false ){
+       while(new landObject(pos.x / k, pos.y / k).free === false ){
             pos =  new landObject(xPos/k,yPos/k);
             k--;
 
         }
-        //console.log(distance(init, end).toString() + "  oooo");
         return pos;
     }
 }
 
 
 function isCollide(pos) {
-    //console.log(pos.x.toString() + ' fff');
-    return land[pos.x][pos.y].free;
+    return !land[pos.x][pos.y].free;
 }
 
 
@@ -233,9 +215,8 @@ function getValidRandom() {
         var xRnd = Math.floor(Math.random() * (length-1));
         var yRnd = Math.floor(Math.random() * (length-1));
         var rAnd= new landObject(xRnd,yRnd);
-        //console.log(rAnd.x.toString() + "dddd");
 
-        if (isCollide(rAnd)) {
+        if (!isCollide(rAnd)) {
             return rAnd;
         }
     }
@@ -243,10 +224,8 @@ function getValidRandom() {
 
 function surroundingRad(init, end , radius){
     var disT = distance(init,end);
-    if(cmToPixel(disT) <= radius){
-        return true;
-    }
-    return false;
+    return cmToPixel(disT) <= radius;
+
 }
 
 /******************************************************
@@ -361,22 +340,21 @@ function rrt(){
       var foundNext = false;
       var goal = false;
       var goalNode = null;
-      var pathS = 0;
+      var pathS = 0;                                                                                                                                                1
 
 
       while(true){
           //frameRate(100000);
           count++;
-          if(goal == true){
+          if(goal === true){
 
               var currNode = goalNode;
               while (currNode.parent != null){
-                  pathS ++;
+                  pathS++;
                   strokeWeight(7);
                   stroke("#0bff09");
                   line(cmToPixel(currNode.curr.x),cmToPixel(currNode.curr.y),cmToPixel(currNode.parent.curr.x),cmToPixel(currNode.parent.curr.y));
                   currNode = currNode.parent;
-
 
               }
               treelen = pathS;
@@ -389,7 +367,7 @@ function rrt(){
           if(count < 5000) {
             count++;
               foundNext = false;
-              while (foundNext == false) {
+              while (foundNext === false) {
                   var rNode = getValidRandom();
                   var parentNode = tree[0];
 
@@ -399,9 +377,7 @@ function rrt(){
                       if (distance(tree[i].curr, rNode) <= distance(parentNode.curr, rNode)) {
 
                           var newPoint = stepNext(tree[i].curr, rNode);
-                          //console.log(distance(tree[i].curr, newPoint).toString() + "  uuuu");
-                          if (isCollide(newPoint) == true) {
-                              //console.log(tree[i].curr.x);
+                          if (!isCollide(newPoint)) {
                               parentNode = tree[i];
                               foundNext = true;
                           }
